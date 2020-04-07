@@ -8,7 +8,6 @@ const Map = (props) => {
   const { data } = props;
   return (
     <GoogleMapReact
-      // bootstrapURLKeys={{ key: "AIzaSyBET98q-kzamKywiYGcV0p7D0JXAauOeXk" }}
       defaultCenter={{ lat: 30.759212493896484, lng: 76.13296508789062 }}
       defaultZoom={6}
     >

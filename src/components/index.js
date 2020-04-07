@@ -5,6 +5,8 @@ import Header from "./Header";
 import SideBox from "./SideBox";
 import { fetchTrucks } from "../utils/api";
 import { commonHandler, statusCheck } from "../utils/helper";
+import moment from "moment";
+
 const StyledTopContainer = styled.div`
   width: 100%;
 `;
@@ -51,6 +53,9 @@ class MapPage extends Component {
     inputValue: "",
     color: "",
     newArray: [],
+    selectedData: [],
+    fieldName: "",
+    rightSearchTerm: "",
   };
 
   componentDidMount() {
@@ -73,19 +78,24 @@ class MapPage extends Component {
     );
   }
 
-  handleClick = (e, a, b) => {
+  handleClick = (e, a, b, show) => {
     const { newArray } = this.state;
-    console.log(b, 'b')
-    if(b) {
-      this.setState({data: b})
-      this.setState({selected: true})
+    if (show) {
+      return;
+    }
+    if (b) {
+      if (b === "empty") {
+        this.setState({ data: newArray, selected: true });
+      } else {
+        this.setState({ data: b });
+        this.setState({ selected: true });
+      }
     }
     if (a === "Total Trucks") {
-        console.log('no')
-        this.setState({
-          data: newArray,
-          selected: false
-        });
+      this.setState({
+        data: newArray,
+        selected: false,
+      });
     } else if (a === "Running Trucks") {
       const val = commonHandler.runningTrucks(newArray).data;
       this.setState({ data: val, selected: false });
@@ -95,7 +105,9 @@ class MapPage extends Component {
     } else if (a === "Idle Trucks") {
       const val = commonHandler.idleTrucks(newArray).data;
       this.setState({ data: val, selected: false });
-    } else if (a === "Running Trucks") {
+    } else if (a === "Error Trucks") {
+      const val = commonHandler.errorTrucks(newArray).data;
+      this.setState({ data: val, selected: false });
     }
   };
 
@@ -114,19 +126,67 @@ class MapPage extends Component {
     }
   };
 
-  setData = (e) => {
-    this.handleClick(null, null, e);
+  onClickTruck = (a, flag) => {
+    if (flag) {
+      this.setState({ selectedData: [] });
+      this.handleClick(null, null, flag);
+      return;
+    }
+    const { selectedData } = this.state;
+    this.setState({ selectedData: [...selectedData, a] }, () => {
+      this.handleClick(null, null, this.state.selectedData);
+      this.setState({rightSearchTerm: ""})
+    });
+  };
+
+  removeTrucks = (r) => {
+    const { selectedData, newArray } = this.state;
+    const val = selectedData.filter((s) => s.truckNumber !== r.truckNumber);
+    this.setState({ selectedData: val, data: val });
+    if (selectedData.length - 1 === 0) {
+      this.setState({ data: newArray });
+    }
+  };
+
+  onRightSearch = (e) => {
+    this.setState({ rightSearchTerm: e.target.value });
+  };
+
+  dataToBeRendered = () => {
+    const { selectedData, newArray, rightSearchTerm } = this.state;
+    let val = [];
+    let result = newArray.filter((a) => !selectedData.includes(a));
+    if (rightSearchTerm) {
+      val = result.filter((a) => a.truckNumber.includes(rightSearchTerm));
+      return val;
+    }
+    return result;
   };
 
   render() {
-    const { data, inputValue, color, newArray, selected } = this.state;
-    console.log(selected, 'data')
+    const {
+      data,
+      inputValue,
+      color,
+      newArray,
+      selected,
+      selectedData,
+      rightSearchTerm,
+    } = this.state;
+    console.log(rightSearchTerm)
     return (
       <StyledTopContainer>
         <Header
-          setData={this.setData}
           handleClick={this.handleClick}
           newArray={newArray}
+          data={data}
+          selected={selected}
+          onClickTruck={this.onClickTruck}
+          dataToBeRendered={this.dataToBeRendered}
+          selectedData={selectedData}
+          removeTrucks={this.removeTrucks}
+          onSearch={this.onRightSearch}
+          rightSearchTerm={rightSearchTerm}
         />
         <StyledBottomContainer>
           <StyledLeftContainer>
@@ -139,15 +199,16 @@ class MapPage extends Component {
                 ></input>
               </div>
               {this.searchData().map((data, idx) => {
+                // console.log(data.lastWaypoint.createTime, moment(data.lastWaypoint.createTime).fromNow())
                 return (
                   <SideBox
                     key={idx}
                     truckNumber={data.truckNumber}
-                    lastCreateTime={data.lastWaypoint.createTime}
+                    lastCreateTime={20}
                     truckRunningState={
                       data.lastRunningState.truckRunningState === 1
-                        ? true
-                        : false
+                        ? "running"
+                        : "stopped"
                     }
                   />
                 );

@@ -24,7 +24,7 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledTopContainer = styled.div`
-  background: ${(props) => (props.selectedData ? "blue" : "white")};
+  background: ${(props) => (props.selectedData ? "#4863A0" : "white")};
   color: white;
   padding: 1px 1px;
 `;
@@ -44,30 +44,25 @@ const StyledInput = styled.input`
   color: grey;
 `;
 
+const StyledSelectedDiv = styled.div`
+  cursor: pointer;
+  border-bottom: 0.1px solid #d3d3d3;
+`;
+
 class DropDown extends Component {
   state = {
-    selectedData: [],
     data: this.props.data,
   };
 
-  onClickTruck = (a) => {
-    const { selectedData } = this.state;
-    this.setState({ selectedData: [...selectedData, a] }, () => {
-        // console.log(this.state.selectedData, 'selected data')
-        this.props.setData(this.state.selectedData);
-    });
-  };
-
-  dataToBeRendered = () => {
-    const { selectedData } = this.state;
-    const { data } = this.props;
-    let result = data.filter((a) => !selectedData.includes(a.truckNumber));
-    return result;
-  };
-
   render() {
-    let { data } = this.state;
-    const { selectedData } = this.state;
+    const {
+      selectedData,
+      dataToBeRendered,
+      onClickTruck,
+      removeTrucks,
+      onSearch,
+      rightSearchTerm,
+    } = this.props;
     return (
       <StyledMainContainer>
         <StyledTopContainer
@@ -76,21 +71,21 @@ class DropDown extends Component {
           {selectedData.length > 0 &&
             selectedData.map((a, idx) => {
               return (
-                <div
-                  style={{
-                    cursor: "pointer",
-                    borderBottom: "0.1px solid #d3d3d3",
-                  }}
-                  key={idx}
-                >
+                <StyledSelectedDiv key={idx} onClick={() => removeTrucks(a)}>
                   <StyledP>{a.truckNumber}</StyledP>
-                </div>
+                </StyledSelectedDiv>
               );
             })}
         </StyledTopContainer>
-        <StyledInput placeholder="Search here... " />
+        {selectedData.length !== this.props.data.length && (
+          <StyledInput
+            value={rightSearchTerm}
+            onChange={(e) => onSearch(e)}
+            placeholder="Search here... "
+          />
+        )}
         <StyledBottomContainer>
-          {this.dataToBeRendered().map((a, idx) => {
+          {dataToBeRendered().map((a, idx) => {
             return (
               <div
                 style={{
@@ -98,7 +93,7 @@ class DropDown extends Component {
                   borderBottom: "0.1px solid #d3d3d3",
                 }}
                 key={idx}
-                onClick={() => this.onClickTruck(a)}
+                onClick={() => onClickTruck(a)}
               >
                 <StyledP>{a.truckNumber}</StyledP>
               </div>
