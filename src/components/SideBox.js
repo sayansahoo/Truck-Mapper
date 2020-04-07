@@ -24,7 +24,7 @@ const StyledInnerBox = styled.div`
 
 class SideBox extends Component {
   render() {
-    const { truckNumber, lastCreateTime, truckRunningState } = this.props;
+    const { truckNumber } = this.props;
     return (
       <StyledMainBox>
         <StyledOuterBox>

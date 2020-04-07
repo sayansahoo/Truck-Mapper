@@ -73,21 +73,28 @@ class MapPage extends Component {
     );
   }
 
-  handleClick = (e, a) => {
+  handleClick = (e, a, b) => {
     const { newArray } = this.state;
+    console.log(b, 'b')
+    if(b) {
+      this.setState({data: b})
+      this.setState({selected: true})
+    }
     if (a === "Total Trucks") {
-      this.setState({
-        data: newArray,
-      });
+        console.log('no')
+        this.setState({
+          data: newArray,
+          selected: false
+        });
     } else if (a === "Running Trucks") {
       const val = commonHandler.runningTrucks(newArray).data;
-      this.setState({ data: val });
+      this.setState({ data: val, selected: false });
     } else if (a === "Stopped Trucks") {
       const val = commonHandler.stoppedTrucks(newArray).data;
-      this.setState({ data: val });
+      this.setState({ data: val, selected: false });
     } else if (a === "Idle Trucks") {
       const val = commonHandler.idleTrucks(newArray).data;
-      this.setState({ data: val });
+      this.setState({ data: val, selected: false });
     } else if (a === "Running Trucks") {
     }
   };
@@ -107,11 +114,20 @@ class MapPage extends Component {
     }
   };
 
+  setData = (e) => {
+    this.handleClick(null, null, e);
+  };
+
   render() {
-    const { data, inputValue, color, newArray } = this.state;
+    const { data, inputValue, color, newArray, selected } = this.state;
+    console.log(selected, 'data')
     return (
       <StyledTopContainer>
-        <Header handleClick={this.handleClick} newArray={newArray} />
+        <Header
+          setData={this.setData}
+          handleClick={this.handleClick}
+          newArray={newArray}
+        />
         <StyledBottomContainer>
           <StyledLeftContainer>
             <div>
