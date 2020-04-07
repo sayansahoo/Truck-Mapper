@@ -24,7 +24,7 @@ const StyledInnerBox = styled.div`
 
 class SideBox extends Component {
   render() {
-    const { truckNumber } = this.props;
+    const { truckNumber, lastCreateTime, truckRunningState } = this.props;
     return (
       <StyledMainBox>
         <StyledOuterBox>
@@ -37,10 +37,10 @@ class SideBox extends Component {
               color={"grey"}
             />
           </StyledInnerBox>
-          <p style={{ fontSize: "10px" }}>22sec</p>
+          <p style={{ fontSize: "10px" }}>{lastCreateTime}</p>
         </StyledOuterBox>
         <p style={{ fontSize: "10px", marginLeft: "10px" }}>
-          Stopped since last 8 hours
+          {truckRunningState} since {lastCreateTime}
         </p>
       </StyledMainBox>
     );

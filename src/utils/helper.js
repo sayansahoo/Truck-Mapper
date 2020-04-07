@@ -20,7 +20,7 @@ export const headerFilters = (data) => {
     },
     {
       name: "Error Trucks",
-      count: 2000,
+      count: commonHandler.errorTrucks(data).count,
     },
   ];
 };
@@ -28,58 +28,61 @@ export const headerFilters = (data) => {
 export const commonHandler = {
   runningTrucks: (data) => {
     return {
-      data: data.filter((a) => a.lastRunningState.truckRunningState === 1),
-      count: data.filter((a) => a.lastRunningState.truckRunningState === 1)
-        .length,
+      data: data.filter((a) => statusCheck(a).status === "running"),
+      count: data.filter((a) => statusCheck(a).status === "running").length,
     };
   },
   stoppedTrucks: (data) => {
     return {
-      data: data.filter(
-        (a) =>
-          a.lastRunningState.truckRunningState === 0 &&
-          !a.lastWaypoint.ignitionOn
-      ),
-      count: data.filter(
-        (a) =>
-          a.lastRunningState.truckRunningState === 0 &&
-          !a.lastWaypoint.ignitionOn
-      ).length,
+      data: data.filter((a) => statusCheck(a).status === "stopped"),
+      count: data.filter((a) => statusCheck(a).status === "stopped").length,
     };
   },
   idleTrucks: (data) => {
     return {
-      data: data.filter(
-        (a) =>
-          a.lastRunningState.truckRunningState === 0 &&
-          a.lastWaypoint.ignitionOn
-      ),
-      count: data.filter(
-        (a) =>
-          a.lastRunningState.truckRunningState === 0 &&
-          a.lastWaypoint.ignitionOn
-      ).length,
+      data: data.filter((a) => statusCheck(a).status === "idle"),
+      count: data.filter((a) => statusCheck(a).status === "idle").length,
     };
   },
+  errorTrucks: (data) => {
+    return {
+      data: data.filter((a) => statusCheck(a).status === "error"),
+      count: data.filter((a) => statusCheck(a).status === "error").length,
+    };
+  },
+};
+
+export const setDate = (a) => {
+  let date = Math.floor((Date.now() - a) / (1000 * 60 * 60));
+  return date;
 };
 
 export const statusCheck = (a) => {
   let color = "";
   let status = "";
-  if (a.lastRunningState.truckRunningState === 1) {
+  if (
+    a.lastRunningState.truckRunningState === 1 &&
+    setDate(a.lastWaypoint.createTime) < 4
+  ) {
     color = "green";
     status = "running";
-  }
-  if (
+  } else if (
     a.lastRunningState.truckRunningState === 0 &&
-    !a.lastWaypoint.ignitionOn
+    !a.lastWaypoint.ignitionOn &&
+    setDate(a.lastWaypoint.createTime) < 4
   ) {
     color = "blue";
     status = "stopped";
-  }
-  if (a.lastRunningState.truckRunningState === 0 && a.lastWaypoint.ignitionOn) {
+  } else if (
+    a.lastRunningState.truckRunningState === 0 &&
+    a.lastWaypoint.ignitionOn &&
+    setDate(a.lastWaypoint.createTime) < 4
+  ) {
     color = "yellow";
     status = "idle";
+  } else if (setDate(a.lastWaypoint.createTime) > 4) {
+    color = "red";
+    status = "error";
   }
   return { status, color };
 };
