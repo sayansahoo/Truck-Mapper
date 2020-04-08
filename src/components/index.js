@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Header from "./Header";
 import SideBox from "./SideBox";
 import { fetchTrucks } from "../utils/api";
-import { commonHandler, statusCheck } from "../utils/helper";
+import { commonHandler, statusCheck, headerFilters } from "../utils/helper";
 import moment from "moment";
 
 const StyledTopContainer = styled.div`
@@ -44,7 +44,7 @@ const StyledLeftContainer = styled.div`
 
 const StyledRightContainer = styled.div`
   height: 100vh;
-  flex: 5;
+  flex: 4;
 `;
 
 class MapPage extends Component {
@@ -65,6 +65,7 @@ class MapPage extends Component {
           newArray: response.data.map((a) => ({
             ...a,
             color: statusCheck(a).color,
+            status: statusCheck(a).status,
           })),
         },
         () =>
@@ -72,6 +73,7 @@ class MapPage extends Component {
             data: response.data.map((a) => ({
               ...a,
               color: statusCheck(a).color,
+              status: statusCheck(a).status,
             })),
           })
       )
@@ -88,7 +90,7 @@ class MapPage extends Component {
         this.setState({ data: newArray, selected: true });
       } else {
         this.setState({ data: b });
-        this.setState({ selected: true });
+        // this.setState({ selected: true });
       }
     }
     if (a === "Total Trucks") {
@@ -135,7 +137,7 @@ class MapPage extends Component {
     const { selectedData } = this.state;
     this.setState({ selectedData: [...selectedData, a] }, () => {
       this.handleClick(null, null, this.state.selectedData);
-      this.setState({rightSearchTerm: ""})
+      this.setState({ rightSearchTerm: "" });
     });
   };
 
@@ -171,9 +173,8 @@ class MapPage extends Component {
       newArray,
       selected,
       selectedData,
-      rightSearchTerm,
+      rightSearchTerm
     } = this.state;
-    console.log(rightSearchTerm)
     return (
       <StyledTopContainer>
         <Header
@@ -200,16 +201,16 @@ class MapPage extends Component {
               </div>
               {this.searchData().map((data, idx) => {
                 // console.log(data.lastWaypoint.createTime, moment(data.lastWaypoint.createTime).fromNow())
+
                 return (
                   <SideBox
                     key={idx}
                     truckNumber={data.truckNumber}
-                    lastCreateTime={20}
-                    truckRunningState={
-                      data.lastRunningState.truckRunningState === 1
-                        ? "running"
-                        : "stopped"
-                    }
+                    lastCreateTime={data.lastWaypoint.createTime}
+                    color={data.color}
+                    status={data.status}
+                    speed={data.status === "Running" && data.lastWaypoint.speed}
+                    stopStartTime={data.lastRunningState.stopStartTime}
                   />
                 );
               })}
