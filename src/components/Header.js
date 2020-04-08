@@ -19,6 +19,7 @@ const StyledHeader = styled.div`
   justify-content: space-around;
   width: 100%;
   flex: 9;
+  cursor: pointer;
 `;
 
 const StyledDropDownContainer = styled.div`
@@ -42,6 +43,8 @@ const StyledSpan = styled.span`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-basis: 0;
+  flex-grow:1;
   cursor: pointer;
   h5 {
     margin-bottom: 10px;
@@ -50,7 +53,6 @@ const StyledSpan = styled.span`
     margin-top: 0;
   }
 `;
-
 class Header extends Component {
   state = {
     dropdownVisible: false,
@@ -95,10 +97,11 @@ class Header extends Component {
       selectedData,
       removeTrucks,
       onSearch,
-      rightSearchTerm,
+      rightSearchTerm
     } = this.props;
     const { dropdownVisible } = this.state;
     const values = selected ? data : newArray;
+   
     return (
       <StyledMainContainer>
         <StyledHeader>

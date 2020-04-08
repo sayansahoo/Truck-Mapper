@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMinus } from "@fortawesome/free-solid-svg-icons";
 
 const StyledMainContainer = styled.div`
   z-index: 9;
@@ -36,12 +38,12 @@ const StyledP = styled.p`
 const StyledBottomContainer = styled.div``;
 
 const StyledInput = styled.input`
-  border: none;
-  border-bottom: 0.1px solid #d3d3d3;
   padding: 5px;
-  margin-top: 5px;
+  margin: 5px 5px;
   outline: none;
   color: grey;
+  width: 95px;
+  border: 0.5px solid #d3d3d3;
 `;
 
 const StyledSelectedDiv = styled.div`
@@ -72,17 +74,25 @@ class DropDown extends Component {
             selectedData.map((a, idx) => {
               return (
                 <StyledSelectedDiv key={idx} onClick={() => removeTrucks(a)}>
-                  <StyledP>{a.truckNumber}</StyledP>
+                  <StyledP>
+                    <FontAwesomeIcon icon={faMinus} /> {a.truckNumber}
+                  </StyledP>
                 </StyledSelectedDiv>
               );
             })}
         </StyledTopContainer>
         {selectedData.length !== this.props.data.length && (
-          <StyledInput
-            value={rightSearchTerm}
-            onChange={(e) => onSearch(e)}
-            placeholder="Search here... "
-          />
+          // <div>
+          //   <hr />
+            <div style={{border: '0.1px solid #d3d3d3'}}>
+              <StyledInput
+                value={rightSearchTerm}
+                onChange={(e) => onSearch(e)}
+                placeholder="Search here... "
+              />
+            {/* </div>
+            <hr /> */}
+          </div>
         )}
         <StyledBottomContainer>
           {dataToBeRendered().map((a, idx) => {
