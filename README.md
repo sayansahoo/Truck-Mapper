@@ -22,5 +22,4 @@ You would need to use your own google map API key in order to view the map prope
     >
 `
 
-### `The app is hosted here -`
- <a href="https://truck-mapper.herokuapp.com/"></a>
+### `The app is hosted here - https://truck-mapper.herokuapp.com/`
