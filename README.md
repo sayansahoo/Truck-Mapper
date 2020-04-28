@@ -6,7 +6,7 @@ In the project directory, you can run:
 
 1) cd Truck-Mapper
 2) npm i
-3) npm start
+3) npm run dev
 
 ### `Important Note`
 
