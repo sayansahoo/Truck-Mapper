@@ -118,7 +118,8 @@ class MapPage extends Component {
   };
 
   searchData = () => {
-    const { inputValue, data } = this.state;
+    let { inputValue, data } = this.state;
+    data = data.sort((a,b)=> b.lastWaypoint.createTime- a.lastWaypoint.createTime);
     let val = [];
     if (inputValue) {
       val = data.filter((a) => a.truckNumber.includes(inputValue));
