@@ -21,3 +21,5 @@ You would need to use your own google map API key in order to view the map prope
       defaultZoom={6}
     >
 `
+
+### `The app is hosted here - https://truck-mapper.herokuapp.com/`
